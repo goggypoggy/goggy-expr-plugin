@@ -3,33 +3,43 @@
   "displayName": "Expression Extension",
   "description": "Auto-completes expressions in Google Code Style",
   "version": "0.0.1",
+  "repository": {
+    "url": "https://github.com/goggypoggy/goggy-expr-plugin"
+  },
   "engines": {
     "vscode": "^1.105.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": ["*", "goggy-expr-plugin.enable"],
+  "activationEvents": [
+    "*",
+    "goggy-expr-plugin.enable"
+  ],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "goggy-expr-plugin.enable",
-      "title": "Enable Expression Auto-completion"
-    },
-    {
-      "command": "goggy-expr-plugin.disable",
-      "title": "Disable Expression Auto-completion"
-    },
-    {
-      "command": "goggy-expr-plugin.toggle",
-      "title": "Toggle Expression Auto-completion On/Off"
-    }],
-    "keybindings": [{
-      "command": "goggy-expr-plugin.toggle",
-      "key": "Ctrl+Alt+E",
-      "mac": "Cmd+Alt+E",
-      "linux": "Ctrl+Alt+E"
-    }]
+    "commands": [
+      {
+        "command": "goggy-expr-plugin.enable",
+        "title": "Enable Expression Auto-completion"
+      },
+      {
+        "command": "goggy-expr-plugin.disable",
+        "title": "Disable Expression Auto-completion"
+      },
+      {
+        "command": "goggy-expr-plugin.toggle",
+        "title": "Toggle Expression Auto-completion On/Off"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "goggy-expr-plugin.toggle",
+        "key": "Ctrl+Alt+E",
+        "mac": "Cmd+Alt+E",
+        "linux": "Ctrl+Alt+E"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
@@ -37,11 +47,11 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.105.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "eslint": "^9.36.0",
+    "@types/vscode": "^1.105.0",
     "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.36.0"
   }
 }

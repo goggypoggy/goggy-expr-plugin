@@ -9,12 +9,16 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["*", "goggy-expr-plugin.enable"],
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "goggy-expr-plugin.helloWorld",
-      "title": "Hello World"
+      "command": "goggy-expr-plugin.enable",
+      "title": "Enable Expression Auto-completion"
+    },
+    {
+      "command": "goggy-expr-plugin.disable",
+      "title": "Disable Expression Auto-completion"
     }],
     "keybindings": [{
       "command": "goggy-expr-plugin.helloWorld",

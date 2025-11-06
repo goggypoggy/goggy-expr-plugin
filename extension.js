@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 
+let extension_is_on = true;
 let count = 1;
 
 /**
@@ -44,8 +45,7 @@ function activate(context) {
 		let check_word = document.getText(document.getWordRangeAtPosition(cur_pos));
 		let line = document.lineAt(cur_pos.line);
 		let left_part = document.getText(new vscode.Range(line.range.start, cur_pos.translate(0, -keyword.length)));
-		let right_part = document.getText(new vscode.Range(cur_pos, line.range.end));
-		
+		let right_part = document.getText(new vscode.Range(cur_pos, line.range.end));	
 		
 		console.log(left_part + check_word + "|" + right_part);
 
@@ -95,10 +95,13 @@ function activate(context) {
 	}
 
 	vscode.workspace.onDidChangeTextDocument((event) => {
+		if (!extension_is_on) {
+			return;
+		}
 		if (event.contentChanges.length === 0 || event.document !== vscode.window.activeTextEditor.document) {
 			return;
 		}
-		let keywords = ["if", "for", "while"];
+		const keywords = ["if", "for", "while"];
 		ExpandWords(keywords);
 		count += 1;
 	})
@@ -107,6 +110,24 @@ function activate(context) {
 		vscode.window.showInformationMessage("Hi");
 	});
 
+	const enable_command = vscode.commands.registerCommand("goggy-expr-plugin.enable", function () {
+		if (extension_is_on) {
+			return;
+		}
+		extension_is_on = true;
+		vscode.window.showInformationMessage("Expression auto-completion enabled");
+	});
+
+	const disable_command = vscode.commands.registerCommand("goggy-expr-plugin.disable", function () {
+		if (!extension_is_on) {
+			return;
+		}
+		extension_is_on = false;
+		vscode.window.showInformationMessage("Expression auto-completion disabled");
+	});
+
+	context.subscriptions.push(enable_command);
+	context.subscriptions.push(disable_command);
 	context.subscriptions.push(disposable);
 }
 

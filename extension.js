@@ -1,33 +1,122 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+let count = 1;
 
 /**
- * @param {vscode.ExtensionContext} context
+ * Runs when the extension is activated.
+ * 
+ * Arguments:
+ *     - context: vscode.ExtensionContext
+ * 
+ * Output: none
  */
 function activate(context) {
+	console.log('Expression Extension is active.');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "goggy-expr-plugin" is now active!');
+	/**
+	 * Checks if a keyword has been typed in the editor
+	 * and if a space was typed after that.
+	 * If so, expands the keyword into a full expression. 
+	 * 
+	 * Arguments:
+	 *     - keyword: string - keyword that has to be expanded
+	 * 
+	 * Output:
+	 *     - true, if a keyword was expanded, false otherwise
+	 */
+	function ExpandWord(keyword) {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			return false;
+		}
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('goggy-expr-plugin.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
+		const document = editor.document;
+		const selection = editor.selection;
+		const cur_pos = selection.active;
+		const cur_char = document.getText(new vscode.Range(cur_pos, cur_pos.translate(0, 1)));
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Sup, dudeman!');
+		console.log("-----", cur_pos.line, cur_pos.character, count, cur_char, "-----");
+		
+		if (cur_char !== ' ') {
+			return false;
+		}
+
+		let check_word = document.getText(document.getWordRangeAtPosition(cur_pos));
+		let line = document.lineAt(cur_pos.line);
+		let left_part = document.getText(new vscode.Range(line.range.start, cur_pos.translate(0, -keyword.length)));
+		let right_part = document.getText(new vscode.Range(cur_pos, line.range.end));
+		
+		
+		console.log(left_part + check_word + "|" + right_part);
+
+		let no_brace = 
+			right_part.indexOf("(") == -1 && 
+			right_part.indexOf(")") == -1 && 
+			right_part.indexOf("{") == -1;
+
+		if (check_word == keyword && no_brace) {
+			let tab_spaces = document.getText(new vscode.Range(line.range.start, new vscode.Position(cur_pos.line, line.firstNonWhitespaceCharacterIndex)));
+			console.log(tab_spaces.length); 
+
+			let tabbed_empty_body = " ".repeat(tab_spaces.length + 4) + "\n";
+			let tabbed_closed_curly = " ".repeat(tab_spaces.length) + "}\n";
+
+			let final_string = "() {\n" + tabbed_empty_body + tabbed_closed_curly;
+
+			editor.edit(edit_builder => {
+				edit_builder.insert(cur_pos.translate(0, 1), final_string);
+			});
+			editor.selection = new vscode.Selection(cur_pos.translate(0, 2), cur_pos.translate(0, 2));
+
+			return true;
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Tries to expand every keyword from a given list.
+	 * Stops after a keyworded was expanded. 
+	 * 
+	 * Arguments:
+	 *     - word_list: string Array, list of keywords the function will try to expand
+	 * 
+	 * Output:
+	 * 	   - true, if a keyword from the list was expanded, false otherwise
+	 */
+	function ExpandWords(word_list) {
+		for (let i = 0; i < word_list.length; ++i) {
+			if (ExpandWord(word_list[i])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	vscode.workspace.onDidChangeTextDocument((event) => {
+		if (event.contentChanges.length === 0 || event.document !== vscode.window.activeTextEditor.document) {
+			return;
+		}
+		let keywords = ["if", "for", "while"];
+		ExpandWords(keywords);
+		count += 1;
+	})
+
+	const disposable = vscode.commands.registerCommand('goggy-expr-plugin.helloWorld', function () {	
+		vscode.window.showInformationMessage("Hi");
 	});
 
 	context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
+/**
+ * Runs when the extension is deactivated.
+ * 
+ * Arguments: none
+ * 
+ * Output: none
+ */
 function deactivate() {}
 
 module.exports = {

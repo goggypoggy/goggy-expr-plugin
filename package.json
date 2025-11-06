@@ -15,6 +15,10 @@
     "commands": [{
       "command": "goggy-expr-plugin.helloWorld",
       "title": "Hello World"
+    }],
+    "keybindings": [{
+      "command": "goggy-expr-plugin.helloWorld",
+      "key": "Ctrl+H Ctrl+I"
     }]
   },
   "scripts": {

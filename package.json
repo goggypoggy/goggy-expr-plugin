@@ -19,10 +19,16 @@
     {
       "command": "goggy-expr-plugin.disable",
       "title": "Disable Expression Auto-completion"
+    },
+    {
+      "command": "goggy-expr-plugin.toggle",
+      "title": "Toggle Expression Auto-completion On/Off"
     }],
     "keybindings": [{
-      "command": "goggy-expr-plugin.helloWorld",
-      "key": "Ctrl+H Ctrl+I"
+      "command": "goggy-expr-plugin.toggle",
+      "key": "Ctrl+Alt+E",
+      "mac": "Cmd+Alt+E",
+      "linux": "Ctrl+Alt+E"
     }]
   },
   "scripts": {
